@@ -1,0 +1,35 @@
+services:
+  app:
+    build: ..
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      HOST: 0.0.0.0
+      PORT: 3210
+      HOLDTHAT_ORIGIN: https://${HOLDTHAT_DOMAIN:?Set the approved public hostname}
+      HOLDTHAT_DATABASE_PATH: /data/holdthat.sqlite
+      HOLDTHAT_MODEL_PROVIDER: none
+    volumes:
+      - holdthat_data:/data
+    expose:
+      - "3210"
+    mem_limit: 512m
+    cpus: 1.0
+  https:
+    image: caddy:2.10.2
+    restart: unless-stopped
+    environment:
+      HOLDTHAT_DOMAIN: ${HOLDTHAT_DOMAIN:?Set the approved public hostname}
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - app
+volumes:
+  holdthat_data:
+  caddy_data:
+  caddy_config:

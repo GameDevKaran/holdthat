@@ -1,17 +1,23 @@
-# HoldThat: architecture
+# HoldThat architecture
 
-Proposed design; no components have been implemented.
+The browser talks to an Express service and real MCP endpoint on the same origin. Deterministic transitions own the checklist. SQLite persists one active session per opaque, HttpOnly browser cookie.
 
-The user selects one owned low-risk checklist, speaks progress, interrupts, then asks to resume. State is `READY → ACTIVE → CHECKPOINT_CONFIRMED → INTERRUPTED → UNCERTAINTY_RESOLVED → RESUMED → DONE`. “I started sorting the cables” is not equivalent to “the cables are packed.” The language model extracts proposed evidence and selects a clarification; deterministic transitions preserve the distinction between started, confirmed and uncertain steps. The user can correct a checkpoint and see downstream consequences.
+## Boundaries
 
-Use a clearly labelled **Alexa+ experience simulation** with real agent tools. Planned stack: TypeScript web application, small relational event store, browser speech input/output and an authorized Amazon Bedrock text model selected at the access gate. The model handles ordinary speech and ambiguous completion language; it cannot invent physical completion or rewrite confirmed history. A static checklist provides the comparison baseline. No native Alexa device is required.
+- src/domain/index.ts: three authored dependency graphs, immutable transitions, explicit confirmations, transitive correction and next-step clarification.
+- src/server/store.ts: transactional revision checks and request deduplication, persisted history and per-browser isolation.
+- src/server/app.ts: constrained REST controls, Streamable HTTP MCP tools, same-origin/host checks, schema validation, request caps and model proposals.
+- src/server/model.ts: optional Bedrock Converse adapter. Validated proposals cannot directly mutate state.
+- src/client/main.ts: accessible form controls, real MCP client, progress review, correction, export, optional speech and clearly labelled model availability.
 
-MVP: three authored checklists, one active session, pause/resume, clarification, correction and a visible evidence timeline. Exclude medication, cooking heat, machinery, financial actions, external reminders, calendar integration and multi-user surveillance. Use synthetic transcripts and consenting adult test recordings; delete raw audio by default after processing.
+The MCP transport is stateless; domain state lives in SQLite. get_session, report_progress, interrupt_task and resume_task are the only tools. Confirmation and correction are explicit interface actions, not model tools.
 
-## Failure handling and data boundaries
+## Progress semantics
 
-Preserve original inputs and make unavailable evidence explicit. Provider failures must return a visible unresolved state. Decisions that change user or provider state need the confirmation specified above. Record source versions and operation identifiers without exposing credentials.
+A reported completion becomes uncertain with a pending confirmation. Started and uncertain states remain unresolved after interruption. Confirmation unlocks dependent steps. A correction resets dependent work without erasing previous events. Revision guards reject stale writes; an identical request retry returns current state without replaying its mutation.
 
-## Implementation record
+Domain event timestamps are logical revisions. Database update/export timestamps are real wall-clock times; neither is proof that physical work occurred.
 
-Add pinned dependencies, actual component boundaries and operational instructions when the first working slice exists. Document departures from this design with their reason; do not describe planned integrations as verified.
+## Storage and hosting
+
+The app uses one SQLite-backed server instance. Cloud hosting must retain /data and preserve a stable HTTPS origin. There is no multi-replica synchronization, login, cross-device transfer or production deployment yet. No paid provider is needed for manual controls; real Bedrock use remains a separate verification gate.

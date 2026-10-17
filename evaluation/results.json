@@ -1,0 +1,559 @@
+{
+  "runAt": "2026-10-17T03:47:35.563Z",
+  "fixtureSha256": "b38e89469937212cecec5d6423f1d032f5107f5d49da46ffbd5fd547cd3a949b",
+  "scope": "Post-implementation synthetic recovery scenarios; expected answers frozen before first evaluation run. Commands are manually encoded, not inferred from natural language. Not an independent human or live-model holdout.",
+  "total": 20,
+  "holdThatPassed": 20,
+  "staticChecklistPassed": 7,
+  "lastReminderPassed": 4,
+  "rows": [
+    {
+      "id": "R01",
+      "expected": {
+        "next": 0,
+        "kind": "next",
+        "confirmed": 0
+      },
+      "actual": {
+        "next": 0,
+        "kind": "next",
+        "confirmed": 0
+      },
+      "errors": [],
+      "passed": true,
+      "staticChecklist": {
+        "next": 0,
+        "kind": "next",
+        "confirmed": 0
+      },
+      "staticPass": true,
+      "lastReminder": {
+        "next": 0,
+        "kind": "next",
+        "confirmed": 0
+      },
+      "reminderPass": true
+    },
+    {
+      "id": "R02",
+      "expected": {
+        "next": 0,
+        "kind": "clarify",
+        "confirmed": 0
+      },
+      "actual": {
+        "next": 0,
+        "kind": "clarify",
+        "confirmed": 0
+      },
+      "errors": [],
+      "passed": true,
+      "staticChecklist": {
+        "next": 0,
+        "kind": "next",
+        "confirmed": 0
+      },
+      "staticPass": false,
+      "lastReminder": {
+        "next": 0,
+        "kind": "next",
+        "confirmed": 0
+      },
+      "reminderPass": false
+    },
+    {
+      "id": "R03",
+      "expected": {
+        "next": 0,
+        "kind": "clarify",
+        "confirmed": 0
+      },
+      "actual": {
+        "next": 0,
+        "kind": "clarify",
+        "confirmed": 0
+      },
+      "errors": [],
+      "passed": true,
+      "staticChecklist": {
+        "next": 0,
+        "kind": "next",
+        "confirmed": 0
+      },
+      "staticPass": false,
+      "lastReminder": {
+        "next": 0,
+        "kind": "next",
+        "confirmed": 0
+      },
+      "reminderPass": false
+    },
+    {
+      "id": "R04",
+      "expected": {
+        "next": 1,
+        "kind": "next",
+        "confirmed": 2
+      },
+      "actual": {
+        "next": 1,
+        "kind": "next",
+        "confirmed": 2
+      },
+      "errors": [],
+      "passed": true,
+      "staticChecklist": {
+        "next": 1,
+        "kind": "next",
+        "confirmed": 2
+      },
+      "staticPass": true,
+      "lastReminder": {
+        "next": 3,
+        "kind": "next",
+        "confirmed": 2
+      },
+      "reminderPass": false
+    },
+    {
+      "id": "R05",
+      "expected": {
+        "next": 3,
+        "kind": "clarify",
+        "confirmed": 1
+      },
+      "actual": {
+        "next": 3,
+        "kind": "clarify",
+        "confirmed": 1
+      },
+      "errors": [],
+      "passed": true,
+      "staticChecklist": {
+        "next": 1,
+        "kind": "next",
+        "confirmed": 1
+      },
+      "staticPass": false,
+      "lastReminder": {
+        "next": 3,
+        "kind": "next",
+        "confirmed": 1
+      },
+      "reminderPass": false
+    },
+    {
+      "id": "R06",
+      "expected": {
+        "next": 1,
+        "kind": "next",
+        "confirmed": 1
+      },
+      "actual": {
+        "next": 1,
+        "kind": "next",
+        "confirmed": 1
+      },
+      "errors": [],
+      "passed": true,
+      "staticChecklist": {
+        "next": 1,
+        "kind": "next",
+        "confirmed": 2
+      },
+      "staticPass": false,
+      "lastReminder": {
+        "next": 1,
+        "kind": "next",
+        "confirmed": 2
+      },
+      "reminderPass": false
+    },
+    {
+      "id": "R07",
+      "expected": {
+        "next": 1,
+        "kind": "next",
+        "confirmed": 2
+      },
+      "actual": {
+        "next": 1,
+        "kind": "next",
+        "confirmed": 2
+      },
+      "errors": [],
+      "passed": true,
+      "staticChecklist": {
+        "next": 1,
+        "kind": "next",
+        "confirmed": 2
+      },
+      "staticPass": true,
+      "lastReminder": {
+        "next": 1,
+        "kind": "next",
+        "confirmed": 2
+      },
+      "reminderPass": true
+    },
+    {
+      "id": "R08",
+      "expected": {
+        "next": 2,
+        "kind": "clarify",
+        "confirmed": 2
+      },
+      "actual": {
+        "next": 2,
+        "kind": "clarify",
+        "confirmed": 2
+      },
+      "errors": [],
+      "passed": true,
+      "staticChecklist": {
+        "next": 2,
+        "kind": "next",
+        "confirmed": 2
+      },
+      "staticPass": false,
+      "lastReminder": {
+        "next": 2,
+        "kind": "next",
+        "confirmed": 2
+      },
+      "reminderPass": false
+    },
+    {
+      "id": "R09",
+      "expected": {
+        "next": 0,
+        "kind": "clarify",
+        "confirmed": 0
+      },
+      "actual": {
+        "next": 0,
+        "kind": "clarify",
+        "confirmed": 0
+      },
+      "errors": [],
+      "passed": true,
+      "staticChecklist": {
+        "next": 0,
+        "kind": "next",
+        "confirmed": 0
+      },
+      "staticPass": false,
+      "lastReminder": {
+        "next": 0,
+        "kind": "next",
+        "confirmed": 0
+      },
+      "reminderPass": false
+    },
+    {
+      "id": "R10",
+      "expected": {
+        "next": 0,
+        "kind": "next",
+        "confirmed": 0
+      },
+      "actual": {
+        "next": 0,
+        "kind": "next",
+        "confirmed": 0
+      },
+      "errors": [],
+      "passed": true,
+      "staticChecklist": {
+        "next": 0,
+        "kind": "next",
+        "confirmed": 2
+      },
+      "staticPass": false,
+      "lastReminder": {
+        "next": 0,
+        "kind": "next",
+        "confirmed": 2
+      },
+      "reminderPass": false
+    },
+    {
+      "id": "R11",
+      "expected": {
+        "next": 0,
+        "kind": "next",
+        "confirmed": 0
+      },
+      "actual": {
+        "next": 0,
+        "kind": "next",
+        "confirmed": 0
+      },
+      "errors": [],
+      "passed": true,
+      "staticChecklist": {
+        "next": 0,
+        "kind": "next",
+        "confirmed": 0
+      },
+      "staticPass": true,
+      "lastReminder": {
+        "next": 0,
+        "kind": "next",
+        "confirmed": 0
+      },
+      "reminderPass": true
+    },
+    {
+      "id": "R12",
+      "expected": {
+        "next": null,
+        "kind": "complete",
+        "confirmed": 5
+      },
+      "actual": {
+        "next": null,
+        "kind": "complete",
+        "confirmed": 5
+      },
+      "errors": [],
+      "passed": true,
+      "staticChecklist": {
+        "next": null,
+        "kind": "complete",
+        "confirmed": 5
+      },
+      "staticPass": true,
+      "lastReminder": {
+        "next": 4,
+        "kind": "next",
+        "confirmed": 5
+      },
+      "reminderPass": false
+    },
+    {
+      "id": "R13",
+      "expected": {
+        "next": 3,
+        "kind": "clarify",
+        "confirmed": 2
+      },
+      "actual": {
+        "next": 3,
+        "kind": "clarify",
+        "confirmed": 2
+      },
+      "errors": [],
+      "passed": true,
+      "staticChecklist": {
+        "next": 2,
+        "kind": "next",
+        "confirmed": 2
+      },
+      "staticPass": false,
+      "lastReminder": {
+        "next": 1,
+        "kind": "next",
+        "confirmed": 2
+      },
+      "reminderPass": false
+    },
+    {
+      "id": "R14",
+      "expected": {
+        "next": 3,
+        "kind": "next",
+        "confirmed": 3
+      },
+      "actual": {
+        "next": 3,
+        "kind": "next",
+        "confirmed": 3
+      },
+      "errors": [],
+      "passed": true,
+      "staticChecklist": {
+        "next": 3,
+        "kind": "next",
+        "confirmed": 4
+      },
+      "staticPass": false,
+      "lastReminder": {
+        "next": 3,
+        "kind": "next",
+        "confirmed": 4
+      },
+      "reminderPass": false
+    },
+    {
+      "id": "R15",
+      "expected": {
+        "next": 0,
+        "kind": "next",
+        "confirmed": 0
+      },
+      "actual": {
+        "next": 0,
+        "kind": "next",
+        "confirmed": 0
+      },
+      "errors": [],
+      "passed": true,
+      "staticChecklist": {
+        "next": 0,
+        "kind": "next",
+        "confirmed": 1
+      },
+      "staticPass": false,
+      "lastReminder": {
+        "next": 0,
+        "kind": "next",
+        "confirmed": 1
+      },
+      "reminderPass": false
+    },
+    {
+      "id": "R16",
+      "expected": {
+        "next": 1,
+        "kind": "next",
+        "confirmed": 1
+      },
+      "actual": {
+        "next": 1,
+        "kind": "next",
+        "confirmed": 1
+      },
+      "errors": [
+        "STALE_REVISION"
+      ],
+      "passed": true,
+      "staticChecklist": {
+        "next": 1,
+        "kind": "next",
+        "confirmed": 1
+      },
+      "staticPass": true,
+      "lastReminder": {
+        "next": 0,
+        "kind": "next",
+        "confirmed": 1
+      },
+      "reminderPass": false
+    },
+    {
+      "id": "R17",
+      "expected": {
+        "next": 0,
+        "kind": "next",
+        "confirmed": 0
+      },
+      "actual": {
+        "next": 0,
+        "kind": "next",
+        "confirmed": 0
+      },
+      "errors": [
+        "DEPENDENCY_UNCONFIRMED"
+      ],
+      "passed": true,
+      "staticChecklist": {
+        "next": 0,
+        "kind": "next",
+        "confirmed": 0
+      },
+      "staticPass": true,
+      "lastReminder": {
+        "next": 0,
+        "kind": "next",
+        "confirmed": 0
+      },
+      "reminderPass": true
+    },
+    {
+      "id": "R18",
+      "expected": {
+        "next": 0,
+        "kind": "clarify",
+        "confirmed": 0
+      },
+      "actual": {
+        "next": 0,
+        "kind": "clarify",
+        "confirmed": 0
+      },
+      "errors": [
+        "INVALID_PHASE"
+      ],
+      "passed": true,
+      "staticChecklist": {
+        "next": 0,
+        "kind": "next",
+        "confirmed": 0
+      },
+      "staticPass": false,
+      "lastReminder": {
+        "next": 0,
+        "kind": "next",
+        "confirmed": 0
+      },
+      "reminderPass": false
+    },
+    {
+      "id": "R19",
+      "expected": {
+        "next": 1,
+        "kind": "clarify",
+        "confirmed": 1
+      },
+      "actual": {
+        "next": 1,
+        "kind": "clarify",
+        "confirmed": 1
+      },
+      "errors": [
+        "PENDING_CONFIRMATION"
+      ],
+      "passed": true,
+      "staticChecklist": {
+        "next": 1,
+        "kind": "next",
+        "confirmed": 1
+      },
+      "staticPass": false,
+      "lastReminder": {
+        "next": 1,
+        "kind": "next",
+        "confirmed": 1
+      },
+      "reminderPass": false
+    },
+    {
+      "id": "R20",
+      "expected": {
+        "next": 1,
+        "kind": "clarify",
+        "confirmed": 1
+      },
+      "actual": {
+        "next": 1,
+        "kind": "clarify",
+        "confirmed": 1
+      },
+      "errors": [],
+      "passed": true,
+      "staticChecklist": {
+        "next": 1,
+        "kind": "next",
+        "confirmed": 1
+      },
+      "staticPass": false,
+      "lastReminder": {
+        "next": 1,
+        "kind": "next",
+        "confirmed": 1
+      },
+      "reminderPass": false
+    }
+  ]
+}

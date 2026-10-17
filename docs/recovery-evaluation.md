@@ -1,0 +1,9 @@
+# Synthetic recovery evaluation
+
+On 17 October 2026, HoldThat matched the frozen expected recovery decision, confirmed count and refusal codes in **20/20** post-implementation scenarios. Fixture SHA256: `b38e89469937212cecec5d6423f1d032f5107f5d49da46ffbd5fd547cd3a949b`. Expected answers were written before the first evaluation run; no domain change followed these results.
+
+The separate 20 development contract tests remain in `tests/domain.test.ts`. This additional fixture covers branch ordering, repeated interruptions, retracted completion, dependency invalidation, correction after completion, reset, stale updates and refused actions across all three templates. Commands are manually encoded. Negative language is explicitly encoded as uncertainty; no model or speech recognizer is being evaluated.
+
+Two simple baselines consume the same accepted actions. A static checklist stores explicit checkmarks, unchecks only the directly corrected item and selects the first unchecked item: **7/20** exact matches. A last-task reminder repeats the last touched step without uncertainty handling: **4/20** exact matches. These are transparent reference algorithms, not evaluations of Todoist or another commercial product. Exact matches require the next step, clarification/next/complete distinction and valid confirmation count to match. These cases intentionally exercise recovery and do not establish general superiority or user benefit.
+
+Run `node --import tsx scripts/evaluate-recovery.ts`. Per-case results and timestamp are in `evaluation/results.json`; inputs are in `evaluation/recovery-cases.json`. No private user data or paid inference was used. No HoldThat case failed in this run. This is not the planned independent 20-dialogue live-model holdout, which remains unrun until a model is configured. Human usability, real speech accuracy, model latency/cost and physical completion accuracy remain unmeasured.

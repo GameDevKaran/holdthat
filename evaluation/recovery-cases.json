@@ -1,0 +1,26 @@
+{
+  "version": 1,
+  "scope": "Post-implementation synthetic recovery scenarios; expected answers frozen before first evaluation run. Commands are manually encoded, not inferred from natural language. Not an independent human or live-model holdout.",
+  "cases": [
+    {"id":"R01","template":"craft-kit","actions":[["start"],["pause"],["resume"]],"next":0,"kind":"next","confirmed":0},
+    {"id":"R02","template":"craft-kit","actions":[["start"],["started",0],["pause"],["resume"]],"next":0,"kind":"clarify","confirmed":0},
+    {"id":"R03","template":"craft-kit","actions":[["start"],["done",0],["pause"],["resume"]],"next":0,"kind":"clarify","confirmed":0},
+    {"id":"R04","template":"craft-kit","actions":[["start"],["done",0],["confirm",0],["done",3],["confirm",3],["pause"],["resume"]],"next":1,"kind":"next","confirmed":2},
+    {"id":"R05","template":"craft-kit","actions":[["start"],["done",0],["confirm",0],["uncertain",3],["pause"],["resume"]],"next":3,"kind":"clarify","confirmed":1},
+    {"id":"R06","template":"craft-kit","actions":[["start"],["done",0],["confirm",0],["done",1],["confirm",1],["done",2],["confirm",2],["correct",1]],"next":1,"kind":"next","confirmed":1},
+    {"id":"R07","template":"craft-kit","actions":[["start"],["done",0],["confirm",0],["done",1],["confirm",1],["done",3],["confirm",3],["correct",1]],"next":1,"kind":"next","confirmed":2},
+    {"id":"R08","template":"desk-cable-kit","actions":[["start"],["done",0],["confirm",0],["done",1],["confirm",1],["started",2],["pause"],["resume"],["pause"],["resume"]],"next":2,"kind":"clarify","confirmed":2},
+    {"id":"R09","template":"desk-cable-kit","actions":[["start"],["done",0],["uncertain",0],["pause"],["resume"]],"next":0,"kind":"clarify","confirmed":0},
+    {"id":"R10","template":"desk-cable-kit","actions":[["start"],["done",0],["confirm",0],["done",1],["confirm",1],["done",2],["confirm",2],["correct",0]],"next":0,"kind":"next","confirmed":0},
+    {"id":"R11","template":"desk-cable-kit","actions":[["start"],["done",0],["confirm",0],["reset"],["start"],["pause"],["resume"]],"next":0,"kind":"next","confirmed":0},
+    {"id":"R12","template":"desk-cable-kit","actions":[["start"],["done",0],["confirm",0],["done",1],["confirm",1],["done",2],["confirm",2],["done",3],["confirm",3],["done",4],["confirm",4]],"next":null,"kind":"complete","confirmed":5},
+    {"id":"R13","template":"travel-packing","actions":[["start"],["done",0],["confirm",0],["started",3],["done",1],["confirm",1],["pause"],["resume"]],"next":3,"kind":"clarify","confirmed":2},
+    {"id":"R14","template":"travel-packing","actions":[["start"],["done",0],["confirm",0],["done",1],["confirm",1],["done",2],["confirm",2],["done",3],["confirm",3],["done",4],["confirm",4],["correct",3]],"next":3,"kind":"next","confirmed":3},
+    {"id":"R15","template":"travel-packing","actions":[["start"],["done",0],["confirm",0],["done",3],["confirm",3],["correct",0]],"next":0,"kind":"next","confirmed":0},
+    {"id":"R16","template":"travel-packing","actions":[["start"],["done",0],["confirm",0],["stale-pause"]],"next":1,"kind":"next","confirmed":1,"errors":["STALE_REVISION"]},
+    {"id":"R17","template":"travel-packing","actions":[["start"],["done",4]],"next":0,"kind":"next","confirmed":0,"errors":["DEPENDENCY_UNCONFIRMED"]},
+    {"id":"R18","template":"craft-kit","actions":[["start"],["done",0],["pause"],["confirm",0],["resume"]],"next":0,"kind":"clarify","confirmed":0,"errors":["INVALID_PHASE"]},
+    {"id":"R19","template":"craft-kit","actions":[["start"],["done",0],["confirm",0],["done",1],["done",3]],"next":1,"kind":"clarify","confirmed":1,"errors":["PENDING_CONFIRMATION"]},
+    {"id":"R20","template":"desk-cable-kit","actions":[["start"],["done",0],["confirm",0],["done",1],["confirm",1],["pause"],["correct",1],["resume"],["uncertain",1]],"next":1,"kind":"clarify","confirmed":1}
+  ]
+}

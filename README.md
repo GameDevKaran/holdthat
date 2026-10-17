@@ -1,25 +1,48 @@
 # HoldThat
 
-Resume interrupted tasks from confirmed checkpoints.
+Pick up an interrupted checklist from what you actually know.
 
-## Status
+HoldThat keeps started, uncertain and confirmed work separate. A completion report creates a review prompt; only an explicit confirmation completes the step. Correcting an earlier step preserves its history and reopens dependent work.
 
-This repository contains the initial product documentation. Application development has not started. There is no runnable application, measured benchmark or deployed service yet.
+## Current behavior
 
-## Intended use
+- Three original low-risk checklists: overnight bag, paper craft kit and disconnected spare cable kit.
+- Report progress, pause, reload, resume, clarify and correct it.
+- Browser-bound private sessions persisted in SQLite, with export and deletion.
+- Real browser MCP client and Streamable HTTP tools for progress, pause and resume.
+- Optional browser dictation/read-aloud, with typed controls available.
+- Optional Bedrock interpretation adapter, disabled by default and not yet live-verified.
 
-Someone packing a travel bag or preparing a craft kit gets interrupted and cannot remember whether the last substep was finished. Restarting an ordinary checklist can repeat work; confidently advancing can omit it. HoldThat records spoken checkpoints and reconstructs the next defensible action after an interruption.
+This is a labelled Alexa+ experience simulation, not a native Alexa connection. No public deployment exists yet. Manual mode is fully local; it does not impersonate model inference.
 
-## Planned workflow
+## Run
 
-The user selects one owned low-risk checklist, speaks progress, interrupts, then asks to resume. State is `READY → ACTIVE → CHECKPOINT_CONFIRMED → INTERRUPTED → UNCERTAINTY_RESOLVED → RESUMED → DONE`. “I started sorting the cables” is not equivalent to “the cables are packed.” The language model extracts proposed evidence and selects a clarification; deterministic transitions preserve the distinction between started, confirmed and uncertain steps. The user can correct a checkpoint and see downstream consequences.
+Requires Node 24.
 
-## Development
+```sh
+npm ci
+npm run build
+npm start
+```
 
-Start with the behavior and boundaries in [Architecture](docs/architecture.md), then establish the fixtures and acceptance checks in [Verification plan](docs/verification-plan.md). Runtime versions, dependency installation, commands and deployment instructions will be added alongside working code. No installation command is available at this stage.
+Open http://127.0.0.1:3210. Configuration is optional for manual mode. Use .env.example as a names-only reference and an ignored .env.local for this app alone.
 
-Keep credentials in local ignored files or the deployment secret store. Do not commit user data, provider tokens or private evaluation records.
+## Verify
+
+```sh
+npm test
+npx playwright install chromium
+npm run test:e2e
+```
+
+The 20 domain cases assert independently specified progress/recovery outcomes. Additional tests cover actual local MCP calls, database reopening, retries, session isolation and injected model failures. Desktop and mobile Chromium workflows exercise the full UI. See [verification](docs/verification-plan.md) for exact results and limits.
+
+## Design and operation
+
+[Architecture](docs/architecture.md) · [Model boundary](docs/model-integration.md) · [Deployment](docs/deployment.md) · [Demo walkthrough](docs/demo.md)
+
+HoldThat does not observe physical work. Its evidence is what the user reports and confirms. It is not suitable for medication, machinery, cooking heat, money movement or other high-stakes procedures. Sessions belong to one browser; clearing cookies loses access. Optional dictation may use the browser vendor's speech service.
 
 ## License
 
-Original application code and these documents use the [MIT license](LICENSE). Future dependencies, models, datasets and media retain their own licenses and must be reviewed before inclusion.
+[MIT](LICENSE) for the application. Third-party packages retain their own licenses. No existing portfolio application code was reused.
