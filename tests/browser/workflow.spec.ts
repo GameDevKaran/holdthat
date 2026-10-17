@@ -1,5 +1,15 @@
 import {test,expect} from '@playwright/test';
 
+test('old tab cannot confirm a replacement checklist at the same revision',async({page})=>{
+ await page.goto('/');await page.getByRole('button',{name:/Pack an overnight bag/}).click();await page.getByLabel('What happened?').fill('Old bag is ready');await page.getByLabel('This means…').selectOption('confirmed');await page.getByRole('button',{name:'Save progress'}).click();await expect(page.getByRole('button',{name:'Yes, I finished this step'})).toBeVisible();
+ const old=(await(await page.request.get('/api/bootstrap')).json()).session;
+ await page.request.delete('/api/session',{data:{expectedSessionId:old.id}});
+ const fresh=(await(await page.request.post('/api/session',{data:{templateId:'travel-packing'}})).json()).session;
+ await page.request.post('/api/command',{data:{command:{type:'start',expectedRevision:0},expectedSessionId:fresh.id,requestId:crypto.randomUUID()}});
+ await page.request.post('/mcp',{headers:{Accept:'application/json, text/event-stream'},data:{jsonrpc:'2.0',id:1,method:'tools/call',params:{name:'report_progress',arguments:{stepId:'choose-bag',status:'confirmed',evidence:'Replacement bag',expectedRevision:1,expectedSessionId:fresh.id,requestId:crypto.randomUUID()}}}});
+ await page.getByRole('button',{name:'Yes, I finished this step'}).click();await expect(page.getByRole('alert')).toContainText('replaced');const after=(await(await page.request.get('/api/bootstrap')).json()).session;expect(after.id).toBe(fresh.id);expect(after.revision).toBe(2);expect(after.steps[0].status).toBe('uncertain');
+});
+
 test('choose, report, confirm, pause, reload and resume without invented completion',async({page})=>{
  await page.goto('/');
  await expect(page.getByRole('heading',{name:'What are you getting ready?'})).toBeVisible();

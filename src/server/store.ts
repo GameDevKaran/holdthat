@@ -25,10 +25,13 @@ export class SessionStore {
     this.db.prepare('INSERT INTO sessions VALUES (?,?,?)').run(owner, JSON.stringify(session), Date.now());
     return session;
   }
-  command(owner: string, command: Command, key: string): Session {
+  command(owner: string, command: Command, key: string, expectedSessionId: string): Session {
     const hash = createHash('sha256').update(JSON.stringify(command)).digest('hex');
     this.db.exec('BEGIN IMMEDIATE');
     try {
+      const current = this.get(owner);
+      if (!current) throw new DomainError('NO_SESSION', 'Choose a checklist first.');
+      if(current.id!==expectedSessionId)throw new DomainError('STALE_SESSION','This checklist was replaced. Reload before changing it.');
       const cached = this.db.prepare('SELECT hash,result FROM operations WHERE owner=? AND key=?').get(owner,key) as {hash:string;result:string}|undefined;
       if (cached) {
         if (cached.hash !== hash) throw new DomainError('KEY_REUSED', 'This request identifier was already used for another action.');
@@ -36,8 +39,6 @@ export class SessionStore {
         // A retry confirms the operation happened; return the current state, never overwrite newer progress.
         return this.get(owner)!;
       }
-      const current = this.get(owner);
-      if (!current) throw new DomainError('NO_SESSION', 'Choose a checklist first.');
       if (current.events.length > 3000) throw new DomainError('SESSION_LIMIT', 'Export and clear this session before continuing.');
       const next = applyCommand(current,command);
       this.db.prepare('UPDATE sessions SET body=?,updated=? WHERE owner=?').run(JSON.stringify(next),Date.now(),owner);

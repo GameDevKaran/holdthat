@@ -35,12 +35,12 @@ async function action(fn:()=>Promise<void>){
  finally{busy=false;render();}
 }
 async function manual(command:Command){
- const data=await api('/api/command',{method:'POST',body:JSON.stringify({command:{...command,expectedRevision:session!.revision},requestId:crypto.randomUUID()})});
+ const data=await api('/api/command',{method:'POST',body:JSON.stringify({command:{...command,expectedRevision:session!.revision},requestId:crypto.randomUUID(),expectedSessionId:session!.id})});
  session=data.session;modelProposal=null;
 }
 async function tool(name:string,args:Record<string,unknown>){
  if(!client)await connect();
- const result=await client!.callTool({name,arguments:args});
+ const result=await client!.callTool({name,arguments:name==='get_session'?args:{...args,expectedSessionId:session!.id}});
  const text=(result.content as Array<{type:string;text?:string}>).find(c=>c.type==='text')?.text;
  if(!text)throw new Error('The tool returned no readable result.');
  const value=JSON.parse(text);
@@ -119,7 +119,7 @@ function bind(){
   const reason=prompt('What needs correcting? Dependent steps will need rechecking.');if(!reason?.trim())return;
   void action(async()=>{await manual({type:'correct',stepId:b.dataset.correct!,status:'pending',reason});notice='Correction saved. Earlier reports remain in the history.';});
  });
- const clear=()=>{if(confirm('Delete this checklist and all its reports from the server? Export first if you want a copy.'))void action(async()=>{await api('/api/session',{method:'DELETE'});session=null;transcript='';modelProposal=null;notice='Your session was cleared.';});};
+ const clear=()=>{if(confirm('Delete this checklist and all its reports from the server? Export first if you want a copy.'))void action(async()=>{await api('/api/session',{method:'DELETE',body:JSON.stringify({expectedSessionId:session!.id})});session=null;transcript='';modelProposal=null;notice='Your session was cleared.';});};
  document.getElementById('clear')?.addEventListener('click',clear);document.getElementById('new-task')?.addEventListener('click',clear);
  document.querySelector<HTMLSelectElement>('#step')?.addEventListener('change',e=>{selectedStep=(e.target as HTMLSelectElement).value;modelProposal=null;});
  document.querySelector<HTMLTextAreaElement>('#statement')?.addEventListener('input',e=>{transcript=(e.target as HTMLTextAreaElement).value;modelProposal=null;});
@@ -128,10 +128,10 @@ function bind(){
   e.preventDefault();void action(async()=>{await tool('report_progress',{stepId:selectedStep,status:reportStatus,evidence:transcript,expectedRevision:session!.revision,requestId:crypto.randomUUID()});transcript='';});
  });
  document.getElementById('interpret')?.addEventListener('click',()=>void action(async()=>{
-  modelProposal=await api('/api/interpret',{method:'POST',body:JSON.stringify({text:transcript,expectedRevision:session!.revision})});
+  modelProposal=await api('/api/interpret',{method:'POST',body:JSON.stringify({text:transcript,expectedRevision:session!.revision,expectedSessionId:session!.id})});
  }));
  document.getElementById('apply-proposal')?.addEventListener('click',()=>void action(async()=>{
-  const p=modelProposal;if(p.expectedRevision!==session!.revision)throw new Error('Progress changed. Request a fresh interpretation.');
+  const p=modelProposal;if(p.expectedSessionId!==session!.id||p.expectedRevision!==session!.revision)throw new Error('Progress changed. Request a fresh interpretation.');
   if(p.intent.action==='clarify'){notice=p.intent.message;return;}
   const name=p.intent.action==='report'?'report_progress':p.intent.action==='interrupt'?'interrupt_task':'resume_task';
   const args:Record<string,unknown>={expectedRevision:session!.revision,requestId:crypto.randomUUID()};

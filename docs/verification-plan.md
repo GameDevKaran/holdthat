@@ -5,8 +5,8 @@ Local verification completed on 16–17 October 2026 with Node 24.8.0, pinned de
 | Check | Observed result |
 |---|---|
 | TypeScript + Vite production build | Passed |
-| Node tests | 36 passed: 20 domain, 7 model contract, 9 server/persistence/integration |
-| Browser tests | 18 passed: 9 scenarios on desktop and mobile Chromium |
+| Node tests | 37 passed: 20 domain, 7 model contract, 10 server/persistence/integration |
+| Browser tests | 20 passed: 10 scenarios on desktop and mobile Chromium |
 | Recovery evaluation | 20/20 synthetic states matched; [method and limits](recovery-evaluation.md) |
 | Real local MCP | Initialize, tool discovery, report, interruption and resume over Streamable HTTP |
 | SQLite persistence | Database reopen and local container restart retain the session |
@@ -15,6 +15,8 @@ Local verification completed on 16–17 October 2026 with Node 24.8.0, pinned de
 | Dependency audit | No production vulnerabilities reported at verification time |
 
 Tests cover explicit confirmation, prerequisites, correction propagation, stale revisions, idempotent retry, browser isolation, origin/host rejection, HTML escaping, typed fallback, unavailable speech support, model-off mode, interpretation review and provider failure. Model tests inject responses, including malformed output. Browser model scenarios visibly label their interpreter **TEST DOUBLE — no live inference**. These never establish a Bedrock request.
+
+Session replacement regression: every mutation and model request carries the session ID as well as its revision. A stale tab cannot confirm, mutate or delete a replacement session even when both have the same revision. REST, MCP and browser regression tests passed; the final browser run took 33.1 seconds.
 
 Reproduce with `npm ci`, `npm run build`, `npm test`, `npx playwright install chromium`, `npm run test:e2e`, and `node --import tsx scripts/evaluate-recovery.ts`. CI is prepared as a manual workflow; no hosted CI run is claimed.
 

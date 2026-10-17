@@ -67,6 +67,8 @@ export function createApp(options:AppOptions){
  }catch(e){next(e);}});
  app.delete('/api/session',(req,res,next)=>{try{
   const owner=identity(req,res);if(!owner)return;
+  const input=z.object({expectedSessionId:z.string().uuid()}).strict().parse(req.body);
+  if(options.store.get(owner)?.id!==input.expectedSessionId)return res.status(409).json({error:'This checklist was replaced. Reload before clearing it.'});
   options.store.clear(owner);modelCounts.delete(owner);res.json({cleared:true});
  }catch(e){next(e);}});
  app.get('/api/export',(req,res)=>{
@@ -78,34 +80,34 @@ export function createApp(options:AppOptions){
  });
  app.post('/api/command',(req,res,next)=>{try{
   const owner=identity(req,res);if(!owner||limited(owner,res))return;
-  const input=z.object({command:manualCommand,requestId}).strict().parse(req.body);
-  res.json({session:options.store.command(owner,input.command,input.requestId)});
+  const input=z.object({command:manualCommand,requestId,expectedSessionId:z.string().uuid()}).strict().parse(req.body);
+  res.json({session:options.store.command(owner,input.command,input.requestId,input.expectedSessionId)});
  }catch(e){next(e);}});
  app.post('/api/interpret',async(req,res,next)=>{try{
   const owner=identity(req,res);if(!owner||limited(owner,res))return;
   if(!options.model)return res.status(503).json({error:'AI interpretation is not configured. Use the progress controls; they remain fully functional.',code:'MODEL_UNAVAILABLE'});
-  const input=z.object({text:z.string().trim().min(1).max(2000),expectedRevision:revision}).strict().parse(req.body);
+  const input=z.object({text:z.string().trim().min(1).max(2000),expectedRevision:revision,expectedSessionId:z.string().uuid()}).strict().parse(req.body);
   const session=options.store.get(owner);
   if(!session)return res.status(404).json({error:'Choose a checklist first.'});
-  if(session.revision!==input.expectedRevision)return res.status(409).json({error:'Checklist changed. Reload before interpreting this update.'});
+  if(session.id!==input.expectedSessionId||session.revision!==input.expectedRevision)return res.status(409).json({error:'Checklist changed. Reload before interpreting this update.'});
   const today=new Date().toISOString().slice(0,10);if(today!==day){day=today;dailyCalls=0;}
   if((modelCounts.get(owner)??0)>=(options.modelCallsPerSession??30)||dailyCalls>=(options.modelCallsPerDay??300))return res.status(429).json({error:'Model request limit reached. Manual controls remain available.'});
   modelCounts.set(owner,(modelCounts.get(owner)??0)+1);dailyCalls++;
   try {
    const result=await options.model({text:input.text,steps:session.steps,phase:session.phase});
    // Interpretation is a proposal only. A separate user action sends it through the real MCP tool.
-   res.json({...result,expectedRevision:session.revision});
+   res.json({...result,expectedRevision:session.revision,expectedSessionId:session.id});
   }catch {res.status(502).json({error:'The model could not produce a valid response. No progress was changed. Use manual controls or retry.',code:'MODEL_FAILED'});}
  }catch(e){next(e);}});
  app.post('/mcp',async(req,res,next)=>{
   const owner=identity(req,res);if(!owner||limited(owner,res))return;
   const server=new McpServer({name:'holdthat',version:'0.1.0'});
   const reply=(session:ReturnType<SessionStore['get']>)=>({content:[{type:'text' as const,text:JSON.stringify({session,decision:session?getResumeDecision(session):null})}]});
-  const run=(command:Command,key:string)=>{try{return reply(options.store.command(owner,command,key));}catch(e){return {isError:true,content:[{type:'text' as const,text:JSON.stringify({error:e instanceof Error?e.message:'Invalid action',code:e instanceof DomainError?e.code:'INVALID_ACTION'})}]};}};
+  const run=(command:Command,key:string,id:string)=>{try{return reply(options.store.command(owner,command,key,id));}catch(e){return {isError:true,content:[{type:'text' as const,text:JSON.stringify({error:e instanceof Error?e.message:'Invalid action',code:e instanceof DomainError?e.code:'INVALID_ACTION'})}]};}};
   server.registerTool('get_session',{description:'Read this browser session and its next unresolved step. No physical completion is inferred.',inputSchema:{}},async()=>reply(options.store.get(owner)));
-  server.registerTool('report_progress',{description:'Record what the user said about one step. Reported completion creates a proposal; it never confirms the step.',inputSchema:{stepId:z.string(),status:z.enum(['started','uncertain','confirmed']),evidence:z.string().trim().min(1).max(2000),expectedRevision:revision,requestId}},async({requestId,...input})=>run({type:'report',...input},requestId));
-  server.registerTool('interrupt_task',{description:'Pause and retain confirmed, started and uncertain progress.',inputSchema:{expectedRevision:revision,requestId}},async({requestId,expectedRevision})=>run({type:'interrupt',expectedRevision},requestId));
-  server.registerTool('resume_task',{description:'Resume a paused task and ask about unresolved progress without inventing completion.',inputSchema:{expectedRevision:revision,requestId}},async({requestId,expectedRevision})=>run({type:'resume',expectedRevision},requestId));
+  server.registerTool('report_progress',{description:'Record what the user said about one step. Reported completion creates a proposal; it never confirms the step.',inputSchema:{stepId:z.string(),status:z.enum(['started','uncertain','confirmed']),evidence:z.string().trim().min(1).max(2000),expectedRevision:revision,requestId,expectedSessionId:z.string().uuid()}},async({requestId,expectedSessionId,...input})=>run({type:'report',...input},requestId,expectedSessionId));
+  server.registerTool('interrupt_task',{description:'Pause and retain confirmed, started and uncertain progress.',inputSchema:{expectedRevision:revision,requestId,expectedSessionId:z.string().uuid()}},async({requestId,expectedRevision,expectedSessionId})=>run({type:'interrupt',expectedRevision},requestId,expectedSessionId));
+  server.registerTool('resume_task',{description:'Resume a paused task and ask about unresolved progress without inventing completion.',inputSchema:{expectedRevision:revision,requestId,expectedSessionId:z.string().uuid()}},async({requestId,expectedRevision,expectedSessionId})=>run({type:'resume',expectedRevision},requestId,expectedSessionId));
   const transport=new StreamableHTTPServerTransport({sessionIdGenerator:undefined,enableJsonResponse:true});
   res.on('close',()=>{void transport.close();void server.close();});
   try{await server.connect(transport);await transport.handleRequest(req,res,req.body);}catch(e){if(!res.headersSent)next(e);}
@@ -115,7 +117,7 @@ export function createApp(options:AppOptions){
  if(existsSync(dist))app.use(express.static(dist,{index:'index.html',etag:true}));
  app.use((_req,res)=>res.status(404).json({error:'Route not found.'}));
  app.use((error:unknown,_req:Request,res:Response,_next:NextFunction)=>{
-  const status=error instanceof DomainError ? (error.code==='STALE_REVISION'||error.code==='KEY_REUSED'?409:400) : error instanceof z.ZodError ? 400 : 500;
+  const status=error instanceof DomainError ? (error.code==='STALE_SESSION'||error.code==='STALE_REVISION'||error.code==='KEY_REUSED'?409:400) : error instanceof z.ZodError ? 400 : 500;
   res.status(status).json({error:error instanceof DomainError?error.message:error instanceof z.ZodError?'Invalid request fields.':'The request could not be completed.',code:error instanceof DomainError?error.code:'REQUEST_FAILED'});
  });
  return app;
