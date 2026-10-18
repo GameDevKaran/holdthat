@@ -1,6 +1,6 @@
 # Current hosting decision — 18 October 2026
 
-Preferred supporting GCP project: tough-melody-508008-p8 only. Existing access verified; no deployment or new spend approved. See [hosting scope](hosting-scope.md). The tested SQLite/volume package below remains valid for local use. Do not deploy it unchanged to ephemeral Cloud Run or mount SQLite through Storage FUSE. Public hosting is optional for Amazon primary entries under the official FAQ; locally runnable source and actual video remain the immediate release path. Any cloud persistence adapter must be separately implemented/tested. The Compose package below is a single-host option, not a Cloud Run migration.
+Preferred GCP project: tough-melody-508008-p8 only. The user approved the scoped three-Amazon-app deployment allowance on 18 October. Public HTTPS is a required release gate. Use the separately tested GCS adapter and [Cloud Run procedure](cloud-run.md); the SQLite/volume package below remains for local use. No FUSE-mounted database. Actual deployment and live verification are recorded separately; a configuration file is not live evidence.
 
 # Deployment and operations
 

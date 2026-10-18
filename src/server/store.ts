@@ -49,9 +49,11 @@ export class SessionStore {
       return next;
     } catch(error) { this.db.exec('ROLLBACK'); throw error; }
   }
-  clear(owner: string): void {
+  clear(owner: string, expectedSessionId?: string): void {
     this.db.exec('BEGIN IMMEDIATE');
     try {
+      const current = this.get(owner);
+      if (current && expectedSessionId && current.id !== expectedSessionId) throw new DomainError('STALE_SESSION', 'This checklist was replaced. Reload before clearing it.');
       this.db.prepare('DELETE FROM operations WHERE owner=?').run(owner);
       this.db.prepare('DELETE FROM sessions WHERE owner=?').run(owner);
       this.db.exec('COMMIT');
