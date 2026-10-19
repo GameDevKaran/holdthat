@@ -8,12 +8,16 @@ HoldThat keeps started, uncertain and confirmed work separate. A completion repo
 
 - Three original low-risk checklists: overnight bag, paper craft kit and disconnected spare cable kit.
 - Report progress, pause, reload, resume, clarify and correct it.
-- Browser-bound private sessions persisted in SQLite, with export and deletion.
+- Browser-bound private sessions persisted in Google Cloud Storage on the public service (SQLite locally), with export and deletion.
 - Real browser MCP client and Streamable HTTP tools for progress, pause and resume.
 - Optional browser dictation/read-aloud, with typed controls available.
 - Optional Bedrock interpretation adapter, disabled by default and not yet live-verified.
 
-This is a labelled Alexa+ experience simulation, not a native Alexa connection. No public deployment exists yet. Manual mode is fully local; it does not impersonate model inference.
+**Try the public app:** https://holdthat-kc4mxxrtbq-uc.a.run.app
+
+This is a labelled Alexa+ experience simulation, not a native Alexa connection. The deployed browser uses actual MCP tools and durable GCS sessions. Model interpretation is disabled; manual controls do not impersonate inference.
+
+Verified 19 October 2026: public desktop/mobile workflow, explicit confirmation, pause/reload/resume, deletion, MCP, owner isolation, cross-origin rejection, export and progress surviving a Cloud Run revision replacement. Source release `0e90b8984c35a912e4471d20a6c7c92adacb9745`; 50 Node and 20 browser checks passed before deployment. See [release evidence](docs/live-release.md).
 
 ## Run
 

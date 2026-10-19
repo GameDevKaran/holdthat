@@ -68,11 +68,11 @@ try {
       await page.getByLabel('What happened?').fill('I started sorting clothes.'); await page.getByLabel('This means…').selectOption('started');
       await page.getByRole('button', {name: 'Save progress'}).click(); await page.getByRole('button', {name: 'Pause for now'}).click(); await page.reload();
       await expect(page.getByRole('heading', {name: 'Safely on pause.'})).toBeVisible(); await page.screenshot({path: '.local/live/holdthat-paused.png', fullPage: true});
-      await page.getByRole('button', {name: 'Pick it back up'}).click(); await expect(page.getByText('Started · completion unknown')).toBeVisible();
+      await page.getByRole('button', {name: 'Pick it back up'}).click(); await expect(page.getByRole('button', {name: 'Pause for now'})).toBeEnabled({timeout: 15000}); await expect(page.getByText('Started · completion unknown')).toBeVisible();
       await expect(page.getByText('1 of 5 confirmed')).toBeVisible(); await page.screenshot({path: '.local/live/holdthat-resumed.png', fullPage: true});
       checks.push('anonymous public browser choose/report/confirm/pause/reload/resume with actual MCP');
       await page.setViewportSize({width: 390, height: 844}); await page.screenshot({path: '.local/live/holdthat-mobile.png', fullPage: true}); checks.push('desktop and mobile screenshots');
-      page.once('dialog', dialog => dialog.accept()); await page.getByRole('button', {name: 'Clear my session'}).click(); await expect(page.getByRole('heading', {name: 'What are you getting ready?'})).toBeVisible();
+      page.once('dialog', dialog => dialog.accept()); const deletion = page.waitForResponse(r => r.url() === base + '/api/session' && r.request().method() === 'DELETE'); await page.getByRole('button', {name: 'Clear my session'}).click(); assert.equal((await deletion).status(), 200); await expect(page.getByRole('heading', {name: 'What are you getting ready?'})).toBeVisible({timeout: 15000});
       checks.push('browser deletion');
     } finally { await context.close(); await browser.close(); }
   }
